@@ -168,17 +168,22 @@ const cifras = [
     letter-spacing: 0.14em;
   }
 
+  /* Las tres cifras siempre comparten una fila en columnas iguales: en ningún ancho queda una
+     tarjeta suelta con hueco a la derecha. Tamaños fluidos para que quepan desde 320 px. */
   .cifras {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.9rem;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(0.6rem, 1.6vw, 0.9rem);
+    width: 100%;
+    max-width: 34rem;
     margin-top: 0.6rem;
   }
 
   .cifra {
     display: grid;
-    min-width: 8.5rem;
-    padding: 0.8rem 1.2rem;
+    align-content: start;
+    min-width: 0;
+    padding: 0.7rem clamp(0.6rem, 2vw, 1.1rem);
     border: var(--line);
     border-radius: 20px;
     background: var(--c);
@@ -187,13 +192,15 @@ const cifras = [
 
   .cifra__n {
     font-family: var(--font-display);
-    font-size: 2.6rem;
+    font-size: clamp(2.1rem, 5vw, 2.6rem);
     line-height: 1;
   }
 
   .cifra__t {
-    font-size: 0.85rem;
+    font-size: clamp(0.75rem, 2vw, 0.85rem);
     font-weight: 600;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
   }
 
   @media (min-width: 900px) {
