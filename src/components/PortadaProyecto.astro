@@ -1,0 +1,258 @@
+---
+/** Composición de portada de un caso: móviles, navegador o collage de piezas. */
+import type { Proyecto } from '../data/proyectos';
+import { pieza } from '../lib/work';
+
+interface Props {
+  proyecto: Proyecto;
+}
+
+const { proyecto } = Astro.props;
+const p = proyecto.portada;
+---
+
+<div class="portada" data-tipo={p.tipo}>
+  {
+    p.tipo === 'moviles' &&
+      p.ids.map((id, i) => {
+        const x = pieza(id);
+        return (
+          <span class={`mov mov--${i + 1}`}>
+            <img src={x.src} width={x.w} height={x.h} alt="" loading="lazy" decoding="async" />
+          </span>
+        );
+      })
+  }
+
+  {
+    p.tipo === 'navegador' &&
+      (() => {
+        const x = pieza(p.id);
+        const sello = p.sello ? pieza(p.sello) : null;
+        return (
+          <>
+            <span class="nav-mini">
+              <span class="nav-mini__barra" aria-hidden="true">
+                <i />
+                <i />
+                <i />
+              </span>
+              <span class="nav-mini__pantalla">
+                <img src={x.src} width={x.w} height={x.h} alt="" loading="lazy" decoding="async" />
+              </span>
+            </span>
+            {sello && (
+              <span class="sello">
+                <img src={sello.src} width={sello.w} height={sello.h} alt="" loading="lazy" decoding="async" />
+              </span>
+            )}
+          </>
+        );
+      })()
+  }
+
+  {
+    p.tipo === 'collage' &&
+      p.ids.map((id, i) => {
+        const x = pieza(id);
+        return (
+          <span class={`foto foto--${i + 1}`}>
+            <img src={x.src} width={x.w} height={x.h} alt="" loading="lazy" decoding="async" />
+          </span>
+        );
+      })
+  }
+</div>
+
+<style>
+  .portada {
+    position: relative;
+    height: 100%;
+    min-height: 17rem;
+    overflow: hidden;
+    border: var(--line);
+    border-radius: 22px;
+    background:
+      radial-gradient(circle, rgb(35 27 58 / 0.13) 1.4px, transparent 1.6px) 0 0 / 16px 16px,
+      color-mix(in srgb, var(--c) 70%, #fff);
+  }
+
+  /* Móviles: tres pantallas en abanico */
+  .mov {
+    position: absolute;
+    bottom: -12%;
+    width: 36%;
+    max-width: 11rem;
+    aspect-ratio: 9 / 19;
+    overflow: hidden;
+    border: 5px solid var(--ink);
+    border-radius: 1.6rem;
+    background: var(--paper);
+    box-shadow: 0 10px 0 rgb(35 27 58 / 0.18);
+    transition: transform 0.5s var(--ease-pop);
+  }
+
+  .mov img {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+    object-position: top;
+  }
+
+  .mov--1 {
+    left: 9%;
+    transform: rotate(-9deg) translateY(3%);
+  }
+
+  .mov--2 {
+    left: 32%;
+    z-index: 2;
+    bottom: -8%;
+    transform: translateY(0);
+  }
+
+  .mov--3 {
+    right: 9%;
+    transform: rotate(9deg) translateY(3%);
+  }
+
+  :global(.card__enlace:hover) .mov--1 {
+    transform: rotate(-13deg) translateY(-3%);
+  }
+
+  :global(.card__enlace:hover) .mov--2 {
+    transform: translateY(-6%);
+  }
+
+  :global(.card__enlace:hover) .mov--3 {
+    transform: rotate(13deg) translateY(-3%);
+  }
+
+  /* Navegador: la parte alta de la página dentro de una ventana */
+  .nav-mini {
+    position: absolute;
+    inset: 12% 8% -4% 8%;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    overflow: hidden;
+    border: var(--line);
+    border-radius: 14px 14px 0 0;
+    background: var(--paper);
+    box-shadow: 0 10px 0 rgb(35 27 58 / 0.16);
+    transition: transform 0.5s var(--ease-out);
+  }
+
+  :global(.card__enlace:hover) .nav-mini {
+    transform: translateY(-4%);
+  }
+
+  .nav-mini__barra {
+    display: flex;
+    gap: 0.3rem;
+    padding: 0.4rem 0.6rem;
+    border-bottom: var(--line);
+    background: var(--cream);
+  }
+
+  .nav-mini__barra i {
+    width: 0.6rem;
+    height: 0.6rem;
+    border: 1.5px solid var(--ink);
+    border-radius: 50%;
+    background: var(--pink);
+  }
+
+  .nav-mini__barra i:nth-child(2) {
+    background: var(--butter);
+  }
+
+  .nav-mini__barra i:nth-child(3) {
+    background: var(--mint);
+  }
+
+  .nav-mini__pantalla {
+    overflow: hidden;
+  }
+
+  .nav-mini__pantalla img {
+    width: 100%;
+    max-width: none;
+  }
+
+  .sello {
+    position: absolute;
+    right: 5%;
+    bottom: 8%;
+    z-index: 2;
+    width: min(46%, 9rem);
+    padding: 0.5rem 0.7rem;
+    border: var(--line);
+    border-radius: 14px;
+    background: var(--paper);
+    box-shadow: 4px 4px 0 var(--ink);
+    transform: rotate(4deg);
+  }
+
+  /* Collage: piezas como fotos pegadas */
+  .foto {
+    position: absolute;
+    display: block;
+    width: 46%;
+    padding: 0.3rem;
+    border: var(--line);
+    border-radius: 12px;
+    background: var(--paper);
+    box-shadow: 4px 5px 0 rgb(35 27 58 / 0.85);
+    transition: transform 0.5s var(--ease-pop);
+  }
+
+  .foto img {
+    width: 100%;
+    border-radius: 7px;
+  }
+
+  .foto--1 {
+    top: 8%;
+    left: 5%;
+    transform: rotate(-6deg);
+  }
+
+  .foto--2 {
+    top: 14%;
+    right: 5%;
+    z-index: 2;
+    transform: rotate(5deg);
+  }
+
+  .foto--3 {
+    bottom: 6%;
+    left: 24%;
+    z-index: 3;
+    transform: rotate(-2deg);
+  }
+
+  .foto--4 {
+    bottom: 8%;
+    right: 3%;
+    z-index: 1;
+    width: 38%;
+    transform: rotate(9deg);
+  }
+
+  :global(.card__enlace:hover) .foto--1 {
+    transform: rotate(-9deg) translateY(-5%);
+  }
+
+  :global(.card__enlace:hover) .foto--2 {
+    transform: rotate(8deg) translateY(-5%);
+  }
+
+  :global(.card__enlace:hover) .foto--3 {
+    transform: rotate(-4deg) translateY(-4%);
+  }
+
+  :global(.card__enlace:hover) .foto--4 {
+    transform: rotate(12deg) translateY(-6%);
+  }
+</style>

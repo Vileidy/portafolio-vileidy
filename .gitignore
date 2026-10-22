@@ -1,0 +1,39 @@
+# Dependencias y salida de build
+node_modules/
+dist/
+.astro/
+
+# Secretos
+.env
+.env.*
+!.env.example
+
+# SO / editor / logs
+.DS_Store
+Thumbs.db
+*.log
+
+# Caché de Python (scripts/preparar-material.py)
+__pycache__/
+*.pyc
+
+# Evidencia de pruebas (capturas y vídeos de Playwright)
+evidence/
+.playwright-mcp/
+
+# Configuración local de Claude Code
+.claude/settings.local.json
+
+# Material promocional de la skill /taste (~10 MB de imágenes que la skill no usa)
+.claude/skills/taste/docs/
+
+# Material original (pesado): se queda fuera de Git. Ver material/README.md
+material/*
+!material/README.md
+
+# Carpeta de trabajo original (~156 MB: PSD, TIF, PDF, JPG sueltos). El sitio usa
+# las versiones optimizadas que genera scripts/preparar-material.py en src/assets/work/
+/PORTAFOLIO 2026 OK/
+
+# Guía de referencia del setup (no es contenido del portafolio)
+/paginasproconanimaciones.pdf

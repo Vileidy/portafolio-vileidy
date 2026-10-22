@@ -1,0 +1,124 @@
+---
+import { hayContacto } from '../data/site';
+
+const base = import.meta.env.BASE_URL;
+const enlaces = [
+  { href: `${base}#proyectos`, texto: 'Proyectos' },
+  { href: `${base}#trabajo`, texto: 'Trabajo' },
+  { href: `${base}#sobre-mi`, texto: 'Sobre mí' },
+  ...(hayContacto ? [{ href: `${base}#contacto`, texto: 'Contacto' }] : []),
+];
+---
+
+<a class="skip" href="#contenido">Saltar al contenido</a>
+
+<header class="nav">
+  <a class="nav__logo" href={base} aria-label="Vileidy Muñoz, ir al inicio">
+    <span class="nav__mono" aria-hidden="true">V</span>
+    <span class="nav__nombre">Vileidy Muñoz</span>
+  </a>
+  <nav aria-label="Principal">
+    <ul class="nav__lista">
+      {
+        enlaces.map((e) => (
+          <li>
+            <a class="nav__enlace" href={e.href}>
+              {e.texto}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</header>
+
+<style>
+  .nav {
+    position: fixed;
+    top: 0.75rem;
+    left: 50%;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    width: min(1100px, calc(100% - 1.5rem));
+    height: 3.5rem;
+    padding: 0 0.5rem 0 0.4rem;
+    transform: translateX(-50%);
+    border: var(--line);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--cream) 86%, transparent);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    box-shadow: 4px 4px 0 var(--ink);
+  }
+
+  .nav__logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .nav__mono {
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: var(--line);
+    border-radius: 50%;
+    background: var(--lav);
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    line-height: 1;
+    transition: transform 0.4s var(--ease-pop);
+  }
+
+  @media (hover: hover) {
+    .nav__logo:hover .nav__mono {
+      transform: rotate(-14deg) scale(1.08);
+    }
+  }
+
+  .nav__nombre {
+    display: none;
+  }
+
+  .nav__lista {
+    display: flex;
+    gap: 0.1rem;
+  }
+
+  .nav__enlace {
+    display: block;
+    padding: 0.45rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.2s;
+  }
+
+  @media (hover: hover) {
+    .nav__enlace:hover {
+      background: var(--butter);
+    }
+  }
+
+  @media (min-width: 640px) {
+    .nav {
+      padding-right: 0.9rem;
+    }
+
+    .nav__nombre {
+      display: inline;
+    }
+
+    .nav__enlace {
+      padding-inline: 1rem;
+      font-size: 1rem;
+    }
+  }
+</style>

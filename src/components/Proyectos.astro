@@ -1,0 +1,179 @@
+---
+import PortadaProyecto from './PortadaProyecto.astro';
+import { proyectos } from '../data/proyectos';
+import { nombreDisciplina } from '../lib/work';
+
+const base = import.meta.env.BASE_URL;
+const anchos = ['a', 'b', 'b', 'a', 'c'];
+---
+
+<section class="section proyectos" id="proyectos" aria-labelledby="proyectos-titulo">
+  <div class="wrap">
+    <header class="section__head">
+      <p class="kicker" style="--c: var(--lav)">Casos de estudio</p>
+      <h2 class="section__title" id="proyectos-titulo">
+        Proyectos <span class="squiggle" style="--c: var(--aqua)">destacados</span>
+      </h2>
+      <p class="section__lead">
+        Cinco trabajos para recorrer con calma: apps, sitios web y campañas. Cada uno se abre en su propia página.
+      </p>
+    </header>
+
+    <ul class="proyectos__lista">
+      {
+        proyectos.map((p, i) => (
+          <li class={`card card--${anchos[i]} reveal`} style={`--c: var(--${p.color}); --rot: ${i % 2 ? 1.2 : -1.2}deg`}>
+            <a class="card__enlace" href={`${base}proyectos/${p.slug}/`} data-tilt>
+              <div class="card__portada">
+                <PortadaProyecto proyecto={p} />
+              </div>
+              <div class="card__texto">
+                <p class="card__num">{String(i + 1).padStart(2, '0')}</p>
+                <p class="card__marca">{p.marca}</p>
+                <h3 class="card__titulo">{p.titulo}</h3>
+                <p class="card__resumen">{p.resumen}</p>
+                <ul class="card__chips">
+                  {p.disciplinas.map((d) => (
+                    <li class="chip">{nombreDisciplina(d)}</li>
+                  ))}
+                </ul>
+                <span class="card__ir" aria-hidden="true">
+                  →
+                </span>
+              </div>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .proyectos__lista {
+    display: grid;
+    gap: clamp(1.25rem, 3vw, 2rem);
+  }
+
+  .card__enlace {
+    position: relative;
+    display: grid;
+    gap: 1rem;
+    height: 100%;
+    padding: 0.9rem;
+    border: var(--line);
+    border-radius: 34px;
+    background: var(--c);
+    box-shadow: 7px 7px 0 var(--ink);
+    text-decoration: none;
+    transform-style: preserve-3d;
+    transition: box-shadow 0.35s var(--ease-out);
+  }
+
+  @media (hover: hover) {
+    .card__enlace:hover {
+      box-shadow: 11px 11px 0 var(--ink);
+    }
+
+    .card__enlace:hover .card__ir {
+      transform: rotate(-45deg) scale(1.12);
+      background: var(--butter);
+    }
+  }
+
+  .card__portada {
+    min-height: 17rem;
+  }
+
+  .card__texto {
+    position: relative;
+    display: grid;
+    align-content: start;
+    gap: 0.5rem;
+    padding: 0.4rem 0.8rem 1rem;
+  }
+
+  .card__num {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    letter-spacing: 0.1em;
+  }
+
+  .card__marca {
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .card__titulo {
+    font-size: clamp(2.1rem, 4vw, 3.2rem);
+    padding-right: 3.6rem;
+  }
+
+  .card__resumen {
+    max-width: 34rem;
+    font-size: 1.02rem;
+  }
+
+  .card__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.4rem;
+  }
+
+  .card__ir {
+    position: absolute;
+    top: 0.4rem;
+    right: 0.8rem;
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    border: var(--line);
+    border-radius: 50%;
+    background: var(--paper);
+    font-size: 1.4rem;
+    font-weight: 700;
+    transition:
+      transform 0.45s var(--ease-pop),
+      background-color 0.2s;
+  }
+
+  @media (min-width: 900px) {
+    .proyectos__lista {
+      grid-template-columns: repeat(12, 1fr);
+    }
+
+    .card--a {
+      grid-column: span 7;
+    }
+
+    .card--b {
+      grid-column: span 5;
+    }
+
+    .card--c {
+      grid-column: span 12;
+    }
+
+    .card--c .card__enlace {
+      grid-template-columns: 1.1fr 1fr;
+      align-items: stretch;
+    }
+
+    .card--c .card__texto {
+      align-content: center;
+      padding: 1rem 2rem;
+    }
+
+    .card__portada {
+      min-height: 21rem;
+    }
+
+    .card--c .card__portada {
+      min-height: 26rem;
+    }
+  }
+</style>

@@ -1,0 +1,272 @@
+---
+import Base from '../../layouts/Base.astro';
+import Bloque from '../../components/Bloque.astro';
+import Doodle from '../../components/Doodle.astro';
+import PortadaProyecto from '../../components/PortadaProyecto.astro';
+import patron from '../../assets/brand/patron-v.svg';
+import { proyectos } from '../../data/proyectos';
+import { nombreDisciplina } from '../../lib/work';
+
+export function getStaticPaths() {
+  return proyectos.map((proyecto) => ({ params: { slug: proyecto.slug }, props: { proyecto } }));
+}
+
+const { proyecto: p } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const indice = proyectos.findIndex((x) => x.slug === p.slug);
+const siguiente = proyectos[(indice + 1) % proyectos.length];
+
+const datos = [
+  { clave: 'Tipo', valores: p.disciplinas.map(nombreDisciplina) },
+  p.herramientas.length ? { clave: 'Programas', valores: p.herramientas } : null,
+  p.periodo ? { clave: 'Año', valores: [p.periodo] } : null,
+].filter(Boolean) as { clave: string; valores: string[] }[];
+---
+
+<Base title={`${p.marca}: ${p.titulo} · Vileidy Muñoz`} description={p.resumen}>
+  <article class="caso" style={`--c: var(--${p.color})`}>
+    <header class="caso__cabecera">
+      <div class="wrap caso__cabecera-grid">
+        <a class="caso__volver" href={`${base}#proyectos`}>← Todos los proyectos</a>
+
+        <p class="kicker" style="--c: var(--paper)">
+          Caso {String(indice + 1).padStart(2, '0')} de {String(proyectos.length).padStart(2, '0')}
+        </p>
+        <p class="caso__marca">{p.marca}</p>
+        <h1 class="caso__titulo">{p.titulo}</h1>
+        <p class="caso__intro">{p.intro}</p>
+
+        <dl class="caso__datos">
+          {
+            datos.map((d) => (
+              <div class="caso__dato">
+                <dt>{d.clave}</dt>
+                <dd>
+                  {d.valores.map((v) => (
+                    <span class="chip">{v}</span>
+                  ))}
+                </dd>
+              </div>
+            ))
+          }
+        </dl>
+
+        <div class="caso__portada" aria-hidden="true">
+          <PortadaProyecto proyecto={p} />
+        </div>
+
+        <span class="caso__doodle caso__doodle--a"><Doodle tipo="estrella" fill="var(--butter)" size="4.2rem" /></span>
+        <span class="caso__doodle caso__doodle--b"><Doodle tipo="destello" fill="var(--paper)" size="3rem" /></span>
+      </div>
+      <div class="caso__banda" style={`--patron: url(${patron.src})`} aria-hidden="true"></div>
+    </header>
+
+    {p.bloques.map((b) => <Bloque bloque={b} grupo={`caso-${p.slug}`} />)}
+
+    <nav class="wrap caso__siguiente" aria-label="Siguiente proyecto">
+      <a class="siguiente" href={`${base}proyectos/${siguiente.slug}/`} style={`--c: var(--${siguiente.color})`}>
+        <span class="siguiente__etiqueta">Siguiente proyecto</span>
+        <span class="siguiente__titulo">{siguiente.marca}</span>
+        <span class="siguiente__flecha" aria-hidden="true">→</span>
+      </a>
+      <a class="btn" href={`${base}#trabajo`} style="--c: var(--butter)">Ver todo el trabajo</a>
+    </nav>
+  </article>
+</Base>
+
+<style>
+  .caso__cabecera {
+    padding-top: calc(var(--nav-h) + clamp(1.5rem, 4vw, 3rem));
+    background: var(--c);
+    overflow: clip;
+  }
+
+  .caso__cabecera-grid {
+    position: relative;
+    display: grid;
+    gap: 1.1rem;
+    justify-items: start;
+    padding-bottom: clamp(3rem, 7vw, 5.5rem);
+  }
+
+  .caso__volver {
+    padding: 0.4rem 1rem;
+    border: var(--line);
+    border-radius: 999px;
+    background: var(--paper);
+    font-weight: 600;
+    text-decoration: none;
+    transition: transform 0.3s var(--ease-pop);
+  }
+
+  @media (hover: hover) {
+    .caso__volver:hover {
+      transform: translateX(-4px);
+    }
+  }
+
+  .caso__marca {
+    margin-top: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .caso__titulo {
+    max-width: 14ch;
+    font-size: clamp(3.2rem, 9.5vw, 7.6rem);
+    line-height: 0.92;
+  }
+
+  .caso__intro {
+    max-width: 44rem;
+    font-size: clamp(1.1rem, 1.9vw, 1.4rem);
+    line-height: 1.5;
+  }
+
+  .caso__datos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.2rem 2.5rem;
+    margin: 0.8rem 0 0;
+  }
+
+  .caso__dato {
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  .caso__dato dt {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .caso__dato dd {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0;
+  }
+
+  /* En pantallas anchas la portada del caso acompaña al texto */
+  .caso__portada {
+    width: 100%;
+    max-width: 34rem;
+    height: 19rem;
+    margin-top: 1rem;
+  }
+
+  .caso__doodle {
+    position: absolute;
+    animation: caso-bal 5s ease-in-out infinite alternate;
+  }
+
+  .caso__doodle--a {
+    top: 4.5rem;
+    right: 2%;
+  }
+
+  .caso__doodle--b {
+    top: 10rem;
+    right: 45%;
+    animation-delay: -2s;
+  }
+
+  @media (min-width: 1000px) {
+    .caso__cabecera-grid {
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+      column-gap: clamp(2rem, 5vw, 5rem);
+      align-items: start;
+    }
+
+    .caso__cabecera-grid > :not(.caso__portada):not(.caso__doodle) {
+      grid-column: 1;
+    }
+
+    .caso__portada {
+      grid-column: 2;
+      grid-row: 3 / span 4;
+      height: 100%;
+      min-height: 24rem;
+      max-width: none;
+      margin-top: 0;
+    }
+  }
+
+  @keyframes caso-bal {
+    from {
+      transform: rotate(-12deg) translateY(0);
+    }
+    to {
+      transform: rotate(12deg) translateY(-10px);
+    }
+  }
+
+  .caso__banda {
+    height: clamp(3.5rem, 8vw, 6.5rem);
+    border-block: var(--line);
+    background: var(--patron) center 18% / cover no-repeat;
+  }
+
+  .caso__siguiente {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.25rem;
+    padding-block: clamp(3rem, 7vw, 5rem) 1rem;
+  }
+
+  .siguiente {
+    position: relative;
+    display: grid;
+    flex: 1 1 22rem;
+    gap: 0.2rem;
+    padding: 1.4rem 4.5rem 1.4rem 1.6rem;
+    border: var(--line);
+    border-radius: 28px;
+    background: var(--c);
+    box-shadow: 7px 7px 0 var(--ink);
+    text-decoration: none;
+    transition:
+      transform 0.35s var(--ease-pop),
+      box-shadow 0.3s var(--ease-out);
+  }
+
+  @media (hover: hover) {
+    .siguiente:hover {
+      transform: translate(-3px, -4px) rotate(-0.6deg);
+      box-shadow: 11px 11px 0 var(--ink);
+    }
+
+    .siguiente:hover .siguiente__flecha {
+      transform: translateX(6px);
+    }
+  }
+
+  .siguiente__etiqueta {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .siguiente__titulo {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    text-transform: uppercase;
+    line-height: 1.05;
+  }
+
+  .siguiente__flecha {
+    position: absolute;
+    right: 1.4rem;
+    top: 50%;
+    margin-top: -1.2rem;
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.2;
+    transition: transform 0.4s var(--ease-pop);
+  }
+</style>

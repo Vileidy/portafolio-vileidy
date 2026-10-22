@@ -1,0 +1,65 @@
+---
+/** Garabatos tipo sticker: relleno pastel y contorno de tinta. El color llega por `fill` o por la variable --c. */
+interface Props {
+  tipo: 'estrella' | 'destello' | 'corazon' | 'flor' | 'carita' | 'explosion' | 'ondas' | 'flecha';
+  fill?: string;
+  size?: string;
+  class?: string;
+}
+
+const { tipo, fill = 'var(--c, var(--butter))', size = '1em', class: clase = '' } = Astro.props;
+
+// Explosión de 12 puntas calculada en lugar de dibujada a mano
+const puntas = Array.from({ length: 24 }, (_, i) => {
+  const r = i % 2 === 0 ? 11 : 8.2;
+  const a = (Math.PI * 2 * i) / 24 - Math.PI / 2;
+  return `${(12 + r * Math.cos(a)).toFixed(2)},${(12 + r * Math.sin(a)).toFixed(2)}`;
+}).join(' ');
+---
+
+<svg
+  class:list={['doodle', clase]}
+  viewBox="0 0 24 24"
+  width={size}
+  height={size}
+  fill={fill}
+  stroke="var(--ink)"
+  stroke-width="1.6"
+  stroke-linejoin="round"
+  stroke-linecap="round"
+  aria-hidden="true"
+  focusable="false"
+>
+  {tipo === 'estrella' && <path d="M12 2l3.2 6.9 7.5.9-5.5 5.1 1.5 7.4L12 18.1 5.3 22.3l1.5-7.4L1.3 9.8l7.5-.9z" />}
+  {tipo === 'destello' && <path d="M12 1.5C12 8.5 15.5 12 22.5 12 15.5 12 12 15.5 12 22.5 12 15.5 8.5 12 1.5 12 8.5 12 12 8.5 12 1.5z" />}
+  {tipo === 'corazon' && <path d="M12 21.5S2.8 15.8 2.8 9.6A5 5 0 0 1 12 7a5 5 0 0 1 9.2 2.6C21.2 15.8 12 21.5 12 21.5z" />}
+  {tipo === 'explosion' && <polygon points={puntas} />}
+  {
+    tipo === 'flor' && (
+      <g>
+        {[0, 60, 120, 180, 240, 300].map((r) => (
+          <circle cx="12" cy="5.6" r="4.2" transform={`rotate(${r} 12 12)`} />
+        ))}
+        <circle cx="12" cy="12" r="3.4" fill="var(--butter)" />
+      </g>
+    )
+  }
+  {
+    tipo === 'carita' && (
+      <g>
+        <circle cx="12" cy="12" r="10.5" />
+        <circle cx="8.6" cy="10" r="1.2" fill="var(--ink)" stroke="none" />
+        <circle cx="15.4" cy="10" r="1.2" fill="var(--ink)" stroke="none" />
+        <path d="M7.2 14.4c1.6 3.2 8 3.2 9.6 0" fill="none" />
+      </g>
+    )
+  }
+  {tipo === 'ondas' && <path d="M1 8q3-5 6 0t6 0 6 0 4 0M1 16q3-5 6 0t6 0 6 0 4 0" fill="none" stroke-width="2.2" />}
+  {tipo === 'flecha' && <path d="M3 17C7 6 15 5 20 11m0 0l-5.5-.4M20 11l-1.4 5.4" fill="none" stroke-width="2" />}
+</svg>
+
+<style>
+  .doodle {
+    overflow: visible;
+  }
+</style>

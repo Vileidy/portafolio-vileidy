@@ -1,0 +1,164 @@
+---
+import Doodle from './Doodle.astro';
+import { piezas } from '../lib/work';
+
+const cuenta = (discs: string[]) => piezas.filter((p) => discs.includes(p.disc)).length;
+
+const servicios = [
+  {
+    filtro: 'uiux',
+    titulo: 'UI / UX y apps',
+    texto: 'Flujos de usuario, pantallas y tableros para aplicaciones móviles.',
+    color: 'lav',
+    doodle: 'destello',
+    n: cuenta(['uiux']),
+  },
+  {
+    filtro: 'web',
+    titulo: 'Diseño web',
+    texto: 'Maquetas de sitios y páginas responsivas.',
+    color: 'aqua',
+    doodle: 'flor',
+    n: cuenta(['web']),
+  },
+  {
+    filtro: 'banners',
+    titulo: 'Campañas digitales',
+    texto: 'Banners, emails y publicaciones para redes sociales.',
+    color: 'pink',
+    doodle: 'corazon',
+    n: cuenta(['banners', 'email', 'redes']),
+  },
+  {
+    filtro: 'identidad',
+    titulo: 'Marca e impresos',
+    texto: 'Logotipos, pendones, vallas y papelería corporativa.',
+    color: 'butter',
+    doodle: 'estrella',
+    n: cuenta(['identidad', 'impreso']),
+  },
+] as const;
+---
+
+<section class="section servicios" aria-labelledby="servicios-titulo">
+  <div class="wrap">
+    <header class="section__head">
+      <p class="kicker" style="--c: var(--pink)">Lo que hago</p>
+      <h2 class="section__title" id="servicios-titulo">
+        Diseño con <span class="squiggle" style="--c: var(--butter)">mucho color</span>
+      </h2>
+    </header>
+
+    <ul class="servicios__lista">
+      {
+        servicios.map((s, i) => (
+          <li class="reveal" style={`--rot: ${i % 2 ? 1.5 : -1.5}deg`}>
+            <button type="button" class="srv" style={`--c: var(--${s.color})`} data-filtrar={s.filtro}>
+              <span class="srv__icono">
+                <Doodle tipo={s.doodle} fill="var(--paper)" size="2.4rem" />
+              </span>
+              <span class="srv__cuenta">
+                <span data-cuenta={s.n}>{s.n}</span>
+                <small>piezas</small>
+              </span>
+              <span class="srv__titulo">{s.titulo}</span>
+              <span class="srv__texto">{s.texto}</span>
+              <span class="srv__ver">Ver trabajos →</span>
+            </button>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .servicios__lista {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  }
+
+  .srv {
+    position: relative;
+    display: grid;
+    align-content: start;
+    gap: 0.5rem;
+    width: 100%;
+    height: 100%;
+    min-height: 19rem;
+    padding: 1.4rem;
+    border: var(--line);
+    border-radius: var(--radius);
+    background: var(--c);
+    box-shadow: 6px 6px 0 var(--ink);
+    text-align: left;
+    cursor: pointer;
+    transition:
+      transform 0.35s var(--ease-pop),
+      box-shadow 0.35s var(--ease-out);
+  }
+
+  @media (hover: hover) {
+    .srv:hover {
+      transform: translate(-3px, -5px) rotate(-1.2deg);
+      box-shadow: 10px 11px 0 var(--ink);
+    }
+
+    .srv:hover .srv__icono {
+      transform: rotate(18deg) scale(1.12);
+    }
+  }
+
+  .srv:active {
+    transform: translate(3px, 3px);
+    box-shadow: 2px 2px 0 var(--ink);
+  }
+
+  .srv__icono {
+    display: grid;
+    place-items: center;
+    width: 4.2rem;
+    height: 4.2rem;
+    border: var(--line);
+    border-radius: 50%;
+    background: var(--paper);
+    transition: transform 0.45s var(--ease-pop);
+  }
+
+  .srv__cuenta {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    margin-top: 0.8rem;
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 5vw, 4.2rem);
+    line-height: 1;
+  }
+
+  .srv__cuenta small {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .srv__titulo {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    line-height: 1.05;
+  }
+
+  .srv__texto {
+    color: var(--ink-soft);
+    font-size: 1rem;
+    line-height: 1.45;
+  }
+
+  .srv__ver {
+    align-self: end;
+    margin-top: 0.4rem;
+    font-weight: 700;
+  }
+</style>

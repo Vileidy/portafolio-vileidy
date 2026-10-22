@@ -1,0 +1,4 @@
+pillow>=11
+numpy>=2
+pymupdf>=1.24
+psd-tools>=1.10

@@ -1,0 +1,537 @@
+---
+import Doodle from './Doodle.astro';
+import retrato from '../assets/brand/retrato.webp';
+import patron from '../assets/brand/patron-v.svg';
+import { site } from '../data/site';
+
+const base = import.meta.env.BASE_URL;
+const letras = 'PORTAFOLIO'.split('');
+const colores = ['aqua', 'lav', 'pink', 'peach', 'butter', 'mint', 'sky', 'aqua', 'lav', 'pink'];
+---
+
+<section class="hero" id="inicio" aria-labelledby="hero-titulo">
+  <div class="hero__manchas" aria-hidden="true">
+    <span class="mancha mancha--aqua"></span>
+    <span class="mancha mancha--rosa"></span>
+    <span class="mancha mancha--mantequilla"></span>
+  </div>
+
+  <div class="wrap">
+    <h1 class="hero__titulo" id="hero-titulo">
+      <span class="sr-only">Portafolio de Vileidy Muñoz, diseñadora UI/UX</span>
+      <span class="hero__letras" aria-hidden="true">
+        {
+          letras.map((l, i) => (
+            <span class="letra" style={`--c: var(--${colores[i]})`}>
+              {l}
+            </span>
+          ))
+        }
+      </span>
+    </h1>
+
+    <div class="hero__escena">
+      <figure class="retrato">
+        <div class="retrato__arco" data-hero="retrato">
+          <img
+            class="retrato__foto"
+            src={retrato.src}
+            width={retrato.width}
+            height={retrato.height}
+            alt="Vileidy Muñoz sonriendo, con sombrero de ala ancha"
+            fetchpriority="high"
+          />
+        </div>
+        <span class="sticker sticker--estrella" data-hero="sticker" data-prof="-30"><span class="sticker__in"><Doodle tipo="estrella" fill="var(--butter)" /></span></span>
+        <span class="sticker sticker--destello" data-hero="sticker" data-prof="26"><span class="sticker__in"><Doodle tipo="destello" fill="var(--aqua)" /></span></span>
+        <span class="sticker sticker--corazon" data-hero="sticker" data-prof="-18"><span class="sticker__in"><Doodle tipo="corazon" fill="var(--pink)" /></span></span>
+        <span class="sticker sticker--flor" data-hero="sticker" data-prof="34"><span class="sticker__in"><Doodle tipo="flor" fill="var(--lav)" /></span></span>
+        <span class="sticker sticker--insignia" data-hero="sticker" data-prof="-14">
+          <span class="sticker__in">
+            <Doodle tipo="explosion" fill="var(--peach)" />
+            <span class="insignia__texto">UI<br />UX</span>
+          </span>
+        </span>
+      </figure>
+
+      <div class="quien" data-hero="quien">
+        <p class="quien__nombre">
+          <span class="squiggle" style="--c: var(--aqua)">Vileidy</span><br />Muñoz
+        </p>
+        <p class="quien__rol">Diseñadora UI UX</p>
+        <span class="sticker sticker--carita" data-hero="sticker" data-prof="22"><span class="sticker__in"><Doodle tipo="carita" fill="var(--mint)" /></span></span>
+      </div>
+
+      <blockquote class="saludo" data-hero="saludo">
+        <span class="saludo__marca" aria-hidden="true">“</span>
+        <p class="saludo__hola">Hola,</p>
+        <p class="saludo__texto">{site.saludo}</p>
+        <span class="saludo__marca saludo__marca--fin" aria-hidden="true">”</span>
+      </blockquote>
+    </div>
+
+    <a class="hero__bajar" href={`${base}#proyectos`}>
+      <span>Mira mi trabajo</span>
+      <Doodle tipo="flecha" fill="none" size="1.6rem" class="hero__flecha" />
+    </a>
+  </div>
+
+  <div class="hero__banda" style={`--patron: url(${patron.src})`} aria-hidden="true">
+    <div class="hero__banda-patron"></div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    padding-top: calc(var(--nav-h) + clamp(1.5rem, 4vw, 3rem));
+    overflow: clip;
+  }
+
+  /* Manchas de fondo: solo se mueven con transform */
+  .mancha {
+    position: absolute;
+    border-radius: 42% 58% 62% 38% / 48% 42% 58% 52%;
+    opacity: 0.85;
+  }
+
+  .mancha--aqua {
+    top: -8%;
+    left: -10%;
+    width: min(46vw, 34rem);
+    aspect-ratio: 1;
+    background: var(--aqua);
+    animation: flota 11s ease-in-out infinite alternate;
+  }
+
+  .mancha--rosa {
+    top: 30%;
+    right: -12%;
+    width: min(42vw, 30rem);
+    aspect-ratio: 1;
+    background: var(--pink);
+    animation: flota 13s ease-in-out -4s infinite alternate-reverse;
+  }
+
+  .mancha--mantequilla {
+    bottom: -6%;
+    left: 28%;
+    width: min(34vw, 24rem);
+    aspect-ratio: 1;
+    background: var(--butter);
+    animation: flota 9s ease-in-out -2s infinite alternate;
+  }
+
+  @keyframes flota {
+    from {
+      transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+    }
+    to {
+      transform: translate3d(3%, 6%, 0) rotate(14deg) scale(1.06);
+    }
+  }
+
+  .wrap {
+    position: relative;
+  }
+
+  /* Título a la manera de la portada: negro, enorme y con mucho tracking */
+  .hero__titulo {
+    position: relative;
+    z-index: 3;
+    text-align: center;
+    font-size: clamp(3.3rem, 15.4vw, 14.5rem);
+    line-height: 0.92;
+    letter-spacing: 0;
+  }
+
+  .hero__letras {
+    display: inline-flex;
+    gap: 0.07em;
+    margin-right: -0.04em;
+  }
+
+  .letra {
+    display: inline-block;
+    color: var(--ink);
+    text-shadow: 0.035em 0.035em 0 var(--c);
+    will-change: transform;
+    cursor: default;
+  }
+
+  .hero__escena {
+    position: relative;
+    display: grid;
+    gap: 2.25rem;
+    justify-items: center;
+    /* el título queda por encima del retrato, sin taparlo */
+    margin-top: clamp(0.5rem, 1.6vw, 1.5rem);
+  }
+
+  .retrato {
+    position: relative;
+    z-index: 1;
+    order: 1;
+    margin: 0;
+    width: min(100%, 24rem);
+    aspect-ratio: 5 / 6;
+  }
+
+  .retrato__arco {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    isolation: isolate;
+    border: var(--line);
+    border-radius: 999px 999px 2rem 2rem;
+    background: linear-gradient(170deg, var(--lav) 0%, var(--lav) 55%, var(--pink) 100%);
+    box-shadow: 7px 7px 0 var(--ink);
+  }
+
+  /* multiply: el blanco y el gris de la foto original se funden con el pastel */
+  .retrato__foto {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+    object-position: center top;
+    mix-blend-mode: multiply;
+  }
+
+  .quien {
+    position: relative;
+    z-index: 2;
+    order: 2;
+    text-align: center;
+  }
+
+  .quien__nombre {
+    font-family: var(--font-script);
+    font-size: clamp(4rem, 12vw, 7.4rem);
+    line-height: 0.82;
+    transform: rotate(-5deg);
+  }
+
+  .quien__rol {
+    display: inline-block;
+    margin-top: 1.4rem;
+    padding-top: 0.7rem;
+    border-top: 3px solid var(--lav-deep);
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+  }
+
+  .saludo {
+    position: relative;
+    order: 3;
+    margin: 0;
+    max-width: 24rem;
+    padding: 2.4rem 1.6rem 2.6rem;
+  }
+
+  .saludo::before,
+  .saludo::after {
+    content: '';
+    position: absolute;
+    height: 0.85rem;
+    border: var(--line);
+    z-index: -1;
+  }
+
+  .saludo::before {
+    top: 2.6rem;
+    left: 0;
+    right: 1rem;
+    background: var(--aqua);
+    transform: rotate(-1.5deg);
+  }
+
+  .saludo::after {
+    bottom: 1.6rem;
+    left: 1rem;
+    right: 0;
+    background: var(--lav);
+    transform: rotate(-1deg);
+  }
+
+  .saludo__marca {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 6rem;
+    line-height: 0.6;
+    height: 2rem;
+  }
+
+  .saludo__marca--fin {
+    margin-top: 0.4rem;
+    text-align: right;
+  }
+
+  .saludo__hola {
+    position: relative;
+    margin-top: 0.8rem;
+    font-family: var(--font-display);
+    font-size: 2.6rem;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .saludo__texto {
+    margin-top: 0.8rem;
+    font-size: 1.02rem;
+    line-height: 1.5;
+  }
+
+  /* Stickers: el contenedor lo mueve GSAP (entrada y parallax); la animación CSS vive en el hijo */
+  .sticker {
+    position: absolute;
+    pointer-events: none;
+  }
+
+  .sticker__in {
+    display: grid;
+    place-items: center;
+    animation: var(--anim);
+  }
+
+  .sticker--estrella {
+    top: 0.4rem;
+    left: -1.8rem;
+    font-size: 4rem;
+    --anim: balanceo 5s ease-in-out infinite alternate;
+  }
+
+  .sticker--destello {
+    top: 22%;
+    right: -1.4rem;
+    font-size: 3rem;
+    --anim: gira 14s linear infinite;
+  }
+
+  .sticker--corazon {
+    bottom: 12%;
+    left: -2rem;
+    font-size: 3.4rem;
+    --anim: latido 2.6s ease-in-out infinite;
+  }
+
+  .sticker--flor {
+    right: -1.8rem;
+    bottom: -1rem;
+    font-size: 4.4rem;
+    --anim: gira 22s linear infinite reverse;
+  }
+
+  .sticker--insignia {
+    top: 0;
+    right: -3.6rem;
+    font-size: 6.4rem;
+    --anim: gira 26s linear infinite;
+  }
+
+  .insignia__texto {
+    position: absolute;
+    font-family: var(--font-display);
+    font-size: 0.28em;
+    line-height: 1;
+    text-align: center;
+    letter-spacing: 0.05em;
+    /* la insignia gira; el texto se contra-gira para leerse siempre derecho */
+    animation: gira 26s linear infinite reverse;
+  }
+
+  .sticker--carita {
+    top: -3.4rem;
+    right: -1rem;
+    font-size: 3.4rem;
+    pointer-events: auto;
+    --anim: balanceo 4s ease-in-out infinite alternate;
+  }
+
+  @keyframes gira {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes balanceo {
+    from {
+      transform: rotate(-9deg) translateY(0);
+    }
+    to {
+      transform: rotate(9deg) translateY(-8px);
+    }
+  }
+
+  @keyframes latido {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.18);
+    }
+  }
+
+  .hero__bajar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    margin: clamp(2rem, 5vw, 3.5rem) auto 0;
+    width: max-content;
+    padding: 0.5rem 1.1rem;
+    border: var(--line);
+    border-radius: 999px;
+    background: var(--paper);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .hero__flecha {
+    transform: rotate(125deg);
+    animation: rebote 1.6s ease-in-out infinite;
+  }
+
+  @keyframes rebote {
+    0%,
+    100% {
+      translate: 0 -2px;
+    }
+    50% {
+      translate: 0 4px;
+    }
+  }
+
+  /* Banda con el monograma V de la barra original, en pastel */
+  .hero__banda {
+    position: relative;
+    height: clamp(5rem, 11vw, 9.5rem);
+    margin-top: clamp(2.5rem, 6vw, 4.5rem);
+    overflow: hidden;
+    border-block: var(--line);
+    background: var(--aqua);
+  }
+
+  .hero__banda-patron {
+    position: absolute;
+    inset: 0 -12% 0 -12%;
+    background: var(--patron) center 18% / cover no-repeat;
+    animation: desliza 24s ease-in-out infinite alternate;
+  }
+
+  @keyframes desliza {
+    from {
+      transform: translateX(-4%);
+    }
+    to {
+      transform: translateX(4%);
+    }
+  }
+
+  /* Estados iniciales de la entrada: solo si hay movimiento permitido */
+  :global([data-motion='on']) .letra {
+    opacity: 0;
+    transform: translateY(45%) rotate(10deg);
+  }
+
+  :global([data-motion='on']) [data-hero='retrato'],
+  :global([data-motion='on']) [data-hero='quien'],
+  :global([data-motion='on']) [data-hero='saludo'] {
+    opacity: 0;
+  }
+
+  :global([data-motion='on']) [data-hero='sticker'] {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+
+  @media (min-width: 900px) {
+    .hero__escena {
+      grid-template-columns: minmax(0, 1fr) minmax(18rem, 25rem) minmax(0, 1fr);
+      align-items: end;
+      justify-items: stretch;
+      gap: clamp(1rem, 3vw, 3rem);
+    }
+
+    .retrato {
+      order: 0;
+      width: 100%;
+      justify-self: center;
+    }
+
+    .quien {
+      order: -1;
+      align-self: center;
+      padding-bottom: 4rem;
+      text-align: left;
+    }
+
+    .sticker--carita {
+      top: auto;
+      bottom: 0.2rem;
+      right: 14%;
+    }
+
+    .saludo {
+      order: 1;
+      justify-self: start;
+      margin-bottom: 1rem;
+    }
+  }
+
+  @media (max-width: 899px) {
+    .hero__titulo {
+      font-size: clamp(3rem, 17vw, 8rem);
+    }
+
+    .hero__escena {
+      margin-top: 0.6rem;
+    }
+
+    .retrato {
+      width: min(100%, 19rem);
+    }
+
+    /* Bajo el título, en los bordes del arco: nada tapa las letras */
+    .sticker--estrella {
+      top: 2.4rem;
+      left: -1.1rem;
+      font-size: 3.2rem;
+    }
+
+    .sticker--destello {
+      top: 4.2rem;
+      right: -1rem;
+      font-size: 2.4rem;
+    }
+
+    .sticker--insignia {
+      top: 42%;
+      right: -1.6rem;
+      font-size: 4.6rem;
+    }
+
+    .sticker--corazon {
+      bottom: 10%;
+      left: -1.1rem;
+      font-size: 2.8rem;
+    }
+
+    .sticker--flor {
+      right: -1rem;
+      bottom: -1.2rem;
+      font-size: 3.6rem;
+    }
+
+    .sticker--carita {
+      top: -3rem;
+      right: 0.2rem;
+      font-size: 3rem;
+    }
+  }
+</style>

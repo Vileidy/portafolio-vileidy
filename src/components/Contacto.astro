@@ -1,0 +1,122 @@
+---
+import Doodle from './Doodle.astro';
+import { site, hayContacto } from '../data/site';
+
+const c = site.contacto;
+const enlaces = [
+  c.email && { texto: 'Escríbeme', detalle: c.email, href: `mailto:${c.email}`, color: 'butter' },
+  c.whatsapp && { texto: 'WhatsApp', detalle: 'Conversemos', href: `https://wa.me/${c.whatsapp}`, color: 'mint' },
+  c.linkedin && { texto: 'LinkedIn', detalle: 'Mi perfil', href: c.linkedin, color: 'sky' },
+  c.behance && { texto: 'Behance', detalle: 'Más proyectos', href: c.behance, color: 'lav' },
+  c.instagram && { texto: 'Instagram', detalle: 'Sígueme', href: c.instagram, color: 'pink' },
+].filter(Boolean) as { texto: string; detalle: string; href: string; color: string }[];
+---
+
+{
+  hayContacto && (
+    <section class="section contacto" id="contacto" aria-labelledby="contacto-titulo">
+      <div class="wrap contacto__caja reveal">
+        <span class="contacto__doodle contacto__doodle--a">
+          <Doodle tipo="corazon" fill="var(--pink)" size="4rem" />
+        </span>
+        <span class="contacto__doodle contacto__doodle--b">
+          <Doodle tipo="destello" fill="var(--butter)" size="3rem" />
+        </span>
+
+        <p class="kicker" style="--c: var(--butter)">
+          Contacto
+        </p>
+        <h2 class="contacto__titulo" id="contacto-titulo">
+          ¿Hacemos algo <span class="contacto__script">divertido</span> juntos?
+        </h2>
+
+        <ul class="contacto__lista">
+          {enlaces.map((e) => (
+            <li>
+              <a class="btn" style={`--c: var(--${e.color})`} href={e.href} target={e.href.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer">
+                <span>{e.texto}</span>
+                <small>{e.detalle}</small>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .contacto__caja {
+    position: relative;
+    display: grid;
+    gap: 1.5rem;
+    justify-items: center;
+    padding: clamp(2.5rem, 7vw, 5rem) var(--pad);
+    border: var(--line);
+    border-radius: 44px;
+    background: var(--lav);
+    box-shadow: 9px 9px 0 var(--ink);
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .contacto__titulo {
+    max-width: 18ch;
+    font-size: clamp(2.6rem, 8vw, 6rem);
+  }
+
+  .contacto__script {
+    font-family: var(--font-script);
+    font-size: 1.15em;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--paper);
+    -webkit-text-stroke: 1.5px var(--ink);
+  }
+
+  .contacto__lista {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.9rem;
+  }
+
+  .contacto__lista .btn {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    padding: 0.8rem 1.5rem;
+    line-height: 1.2;
+  }
+
+  .contacto__lista small {
+    font-weight: 500;
+    opacity: 0.75;
+  }
+
+  .contacto__doodle {
+    position: absolute;
+    animation: contacto-bal 5s ease-in-out infinite alternate;
+  }
+
+  .contacto__doodle--a {
+    top: 1.2rem;
+    left: 1.5rem;
+  }
+
+  .contacto__doodle--b {
+    right: 2rem;
+    bottom: 1.5rem;
+    animation-delay: -2s;
+  }
+
+  @keyframes contacto-bal {
+    from {
+      transform: rotate(-12deg);
+    }
+    to {
+      transform: rotate(12deg) translateY(-8px);
+    }
+  }
+</style>

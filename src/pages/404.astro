@@ -1,0 +1,44 @@
+---
+import Base from '../layouts/Base.astro';
+import Doodle from '../components/Doodle.astro';
+
+const base = import.meta.env.BASE_URL;
+---
+
+<Base title="Página no encontrada · Vileidy Muñoz">
+  <section class="perdida">
+    <Doodle tipo="carita" fill="var(--butter)" size="7rem" class="perdida__carita" />
+    <h1>Uy, aquí no hay nada</h1>
+    <p>La página que buscas no existe o cambió de lugar.</p>
+    <a class="btn" href={base} style="--c: var(--aqua)">Volver al inicio</a>
+  </section>
+</Base>
+
+<style>
+  .perdida {
+    display: grid;
+    gap: 1.2rem;
+    justify-items: center;
+    min-height: 100dvh;
+    align-content: center;
+    padding: 6rem var(--pad) 4rem;
+    text-align: center;
+  }
+
+  h1 {
+    font-size: clamp(3rem, 10vw, 7rem);
+  }
+
+  .perdida :global(.perdida__carita) {
+    animation: perdida-bal 3s ease-in-out infinite alternate;
+  }
+
+  @keyframes perdida-bal {
+    from {
+      transform: rotate(-10deg);
+    }
+    to {
+      transform: rotate(10deg) translateY(-8px);
+    }
+  }
+</style>

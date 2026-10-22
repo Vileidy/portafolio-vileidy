@@ -1,0 +1,512 @@
+---
+/** Un bloque de contenido de un caso de estudio (móviles, navegador, flujos, rejilla, tiras). */
+import type { Bloque } from '../data/proyectos';
+import { pieza, atributosVisor } from '../lib/work';
+
+interface Props {
+  bloque: Bloque;
+  grupo: string;
+}
+
+const { bloque, grupo } = Astro.props;
+const piezas = bloque.ids.map(pieza);
+const visor = (p: ReturnType<typeof pieza>) => atributosVisor(p, grupo, false);
+---
+
+<section class="bloque" data-tipo={bloque.tipo}>
+  <header class="bloque__cabeza wrap reveal">
+    <h2 class="bloque__titulo">{bloque.titulo}</h2>
+    {bloque.texto && <p class="bloque__texto">{bloque.texto}</p>}
+  </header>
+
+  {
+    bloque.tipo === 'moviles' && (
+      <ul class="carril" data-carril tabindex="0" aria-label={`${bloque.titulo}: desliza para ver más`}>
+        {piezas.map((p) => (
+          <li class="movil">
+            <button type="button" class="movil__marco" aria-label={`${p.title}. Ver en grande`} {...visor(p)}>
+              <img src={p.src} width={p.w} height={p.h} alt="" loading="lazy" decoding="async" draggable="false" />
+            </button>
+            <p class="movil__pie">{p.title}</p>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+
+  {
+    bloque.tipo === 'navegador' && (
+      <div class="wrap navegadores">
+        {piezas.map((p) => (
+          <figure class="ventana" data-navegador>
+            <div class="ventana__barra" aria-hidden="true">
+              <i />
+              <i />
+              <i />
+              <span class="ventana__url">{p.title}</span>
+            </div>
+            <div class="ventana__pantalla" data-pantalla>
+              <img src={p.src} width={p.w} height={p.h} alt={p.alt} loading="lazy" decoding="async" />
+            </div>
+            <figcaption class="ventana__pie">
+              <span>{p.title}</span>
+              <button type="button" class="chip" {...visor(p)}>
+                Ver completa
+              </button>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+    )
+  }
+
+  {
+    bloque.tipo === 'flujos' && (
+      <ul class="wrap flujos">
+        {piezas.map((p, i) => (
+          <li class="flujo reveal" style={`--rot: ${i % 2 ? 0.8 : -0.8}deg`}>
+            <button type="button" class="flujo__btn" aria-label={`${p.title}. Ver en grande`} {...visor(p)}>
+              <img src={p.src} width={p.w} height={p.h} alt="" loading="lazy" decoding="async" />
+              <span class="flujo__etiqueta">
+                <span class="flujo__num">{String(i + 1).padStart(2, '0')}</span>
+                {p.title}
+              </span>
+            </button>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+
+  {
+    bloque.tipo === 'dispositivos' && (
+      <ul class="wrap dispositivos" style={`--resto: ${Math.max(piezas.length - 1, 1)}`}>
+        {piezas.map((p, i) => (
+          <li class={`disp reveal ${i === 0 ? 'disp--grande' : ''}`}>
+            <button type="button" class="disp__btn" aria-label={`${p.title}. Ver en grande`} {...visor(p)}>
+              <img src={p.src} width={p.w} height={p.h} alt="" loading="lazy" decoding="async" />
+            </button>
+            <p class="disp__pie">{p.title}</p>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+
+  {
+    bloque.tipo === 'rejilla' && (
+      <ul class="wrap rejilla" data-pocas={piezas.length < 5 ? '' : undefined} style={`--c2: ${Math.min(2, piezas.length)}; --c3: ${Math.min(3, piezas.length)}; --c4: ${Math.min(4, piezas.length)}`}>
+        {piezas.map((p, i) => (
+          <li class="pieza reveal" style={`--rot: ${i % 2 ? 1 : -1}deg; --w: ${p.w}`}>
+            <button type="button" class="pieza__btn" aria-label={`${p.title}. Ver en grande`} {...visor(p)}>
+              <img src={p.src} width={p.w} height={p.h} alt="" loading="lazy" decoding="async" />
+            </button>
+            <p class="pieza__pie">{p.title}</p>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+
+  {
+    bloque.tipo === 'tiras' && (
+      <ul class="carril carril--tiras" data-carril tabindex="0" aria-label={`${bloque.titulo}: desliza para ver más`}>
+        {piezas.map((p) => (
+          <li class="tira">
+            <button type="button" class="tira__btn" aria-label={`${p.title}. Ver en grande`} {...visor(p)}>
+              <img src={p.src} width={p.w} height={p.h} alt="" loading="lazy" decoding="async" draggable="false" />
+            </button>
+            <p class="tira__pie">{p.title}</p>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</section>
+
+<style>
+  .bloque {
+    padding-block: clamp(1.75rem, 4vw, 3rem);
+  }
+
+  .bloque__cabeza {
+    display: grid;
+    gap: 0.5rem;
+    margin-bottom: 1.4rem;
+  }
+
+  .bloque__titulo {
+    font-size: clamp(2rem, 5vw, 3.6rem);
+  }
+
+  .bloque__texto {
+    max-width: 38rem;
+    color: var(--ink-soft);
+    font-size: 1.1rem;
+  }
+
+  /* ── Carril horizontal (móviles y tiras) ───────────────────────── */
+  .carril {
+    display: flex;
+    gap: clamp(1rem, 2.4vw, 1.75rem);
+    --alinear: max(var(--pad), calc((100% - 1240px) / 2));
+    padding: 0.5rem var(--alinear) 1.6rem;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scroll-padding-inline: var(--alinear);
+    scrollbar-width: thin;
+    scrollbar-color: var(--ink) transparent;
+    cursor: grab;
+  }
+
+  .carril:active {
+    cursor: grabbing;
+  }
+
+  .movil,
+  .tira {
+    flex: none;
+    scroll-snap-align: start;
+  }
+
+  .movil {
+    width: clamp(11.5rem, 22vw, 15rem);
+  }
+
+  .movil__marco {
+    display: block;
+    width: 100%;
+    aspect-ratio: 9 / 19.5;
+    overflow: hidden;
+    padding: 0;
+    border: 6px solid var(--ink);
+    border-radius: 2.2rem;
+    background: var(--paper);
+    box-shadow: 0 12px 0 rgb(35 27 58 / 0.18);
+    cursor: inherit;
+    transition: transform 0.45s var(--ease-pop);
+  }
+
+  .movil__marco img {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+    object-position: top;
+  }
+
+  @media (hover: hover) {
+    .movil__marco:hover {
+      transform: translateY(-8px) rotate(-1.5deg);
+    }
+  }
+
+  .movil__pie,
+  .tira__pie,
+  .pieza__pie,
+  .disp__pie {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .tira__btn {
+    display: block;
+    padding: 0.5rem;
+    border: var(--line);
+    border-radius: 18px;
+    background: var(--c);
+    box-shadow: 5px 5px 0 var(--ink);
+    cursor: inherit;
+    transition: transform 0.4s var(--ease-pop);
+  }
+
+  .tira__btn img {
+    height: clamp(22rem, 52vh, 30rem);
+    width: auto;
+    max-width: none;
+    border-radius: 9px;
+  }
+
+  @media (hover: hover) {
+    .tira__btn:hover {
+      transform: translateY(-6px) rotate(1deg);
+    }
+  }
+
+  /* ── Ventana de navegador ──────────────────────────────────────── */
+  .navegadores {
+    display: grid;
+    gap: clamp(2.5rem, 6vw, 4rem);
+  }
+
+  .ventana {
+    margin: 0;
+    overflow: hidden;
+    border: var(--line);
+    border-radius: 22px;
+    background: var(--paper);
+    box-shadow: 8px 8px 0 var(--ink);
+  }
+
+  .ventana__barra {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.7rem 1rem;
+    border-bottom: var(--line);
+    background: var(--c);
+  }
+
+  .ventana__barra i {
+    width: 0.8rem;
+    height: 0.8rem;
+    border: var(--line);
+    border-radius: 50%;
+    background: var(--pink);
+  }
+
+  .ventana__barra i:nth-child(2) {
+    background: var(--butter);
+  }
+
+  .ventana__barra i:nth-child(3) {
+    background: var(--mint);
+  }
+
+  .ventana__url {
+    flex: 1;
+    margin-left: 0.6rem;
+    padding: 0.15rem 0.9rem;
+    overflow: hidden;
+    border: var(--line);
+    border-radius: 999px;
+    background: var(--paper);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ventana__pantalla {
+    height: clamp(22rem, 62vh, 38rem);
+    overflow-y: auto;
+  }
+
+  :global([data-motion='on']) .ventana__pantalla {
+    overflow: hidden;
+  }
+
+  .ventana__pantalla img {
+    width: 100%;
+    max-width: none;
+    will-change: transform;
+  }
+
+  .ventana__pie {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.8rem 1rem;
+    border-top: var(--line);
+    background: var(--cream);
+    font-weight: 600;
+  }
+
+  .ventana__pie .chip {
+    background: var(--butter);
+    cursor: pointer;
+  }
+
+  /* ── Tableros de flujo ─────────────────────────────────────────── */
+  .flujos {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .flujo__btn {
+    position: relative;
+    display: block;
+    width: 100%;
+    padding: 0.6rem;
+    overflow: hidden;
+    border: var(--line);
+    border-radius: 24px;
+    background: var(--paper);
+    box-shadow: 6px 6px 0 var(--ink);
+    cursor: zoom-in;
+    transition:
+      transform 0.4s var(--ease-pop),
+      box-shadow 0.3s var(--ease-out);
+  }
+
+  .flujo__btn img {
+    width: 100%;
+    border-radius: 12px;
+  }
+
+  .flujo__etiqueta {
+    position: absolute;
+    left: 1.1rem;
+    bottom: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.35rem 1rem 0.35rem 0.4rem;
+    border: var(--line);
+    border-radius: 999px;
+    background: var(--c);
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+
+  .flujo__num {
+    display: grid;
+    place-items: center;
+    min-width: 2rem;
+    height: 2rem;
+    border: var(--line);
+    border-radius: 50%;
+    background: var(--paper);
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+  }
+
+  @media (hover: hover) {
+    .flujo__btn:hover {
+      transform: translate(-3px, -4px) rotate(-0.4deg);
+      box-shadow: 10px 11px 0 var(--ink);
+    }
+  }
+
+  @media (min-width: 900px) {
+    .flujos {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.75rem;
+    }
+
+    /* el primer y el quinto tablero son más altos: ocupan la fila entera */
+    .flujo:nth-child(1),
+    .flujo:nth-child(5) {
+      grid-column: 1 / -1;
+    }
+  }
+
+  /* ── Dispositivos ──────────────────────────────────────────────── */
+  .dispositivos {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+
+  .disp--grande {
+    grid-column: 1 / -1;
+  }
+
+  /* una pieza sola en su fila ocupa todo el ancho */
+  .disp:last-child:nth-child(even) {
+    grid-column: 1 / -1;
+  }
+
+  .disp__btn {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    padding: 0.8rem;
+    border: var(--line);
+    border-radius: 24px;
+    background: var(--paper);
+    box-shadow: 6px 6px 0 var(--ink);
+    cursor: zoom-in;
+  }
+
+  .disp__btn img {
+    width: auto;
+    max-height: 26rem;
+    border-radius: 10px;
+  }
+
+  .disp--grande .disp__btn img {
+    width: 100%;
+    max-height: 34rem;
+    object-fit: contain;
+  }
+
+  @media (min-width: 900px) {
+    /* la primera pieza es la protagonista; el resto se reparte el ancho que queda */
+    .dispositivos {
+      grid-template-columns: 1.7fr repeat(var(--resto), minmax(0, 1fr));
+    }
+
+    .disp--grande,
+    .disp:last-child:nth-child(even) {
+      grid-column: auto;
+    }
+  }
+
+  /* ── Rejilla (columnas con alturas naturales) ──────────────────── */
+  /* Solo se usan las columnas que hacen falta: pocas piezas no dejan huecos a la derecha */
+  .rejilla {
+    columns: var(--c2);
+    column-gap: 1rem;
+  }
+
+  .pieza {
+    break-inside: avoid;
+    margin-bottom: 1.1rem;
+  }
+
+  /* Con pocas piezas se centran y se limitan a ~1.5x su tamaño real para no pixelarlas */
+  .rejilla[data-pocas] {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 1.25rem;
+  }
+
+  .rejilla[data-pocas] .pieza {
+    flex: 0 1 clamp(13rem, calc(var(--w) * 1.5px), 30rem);
+    margin-bottom: 0;
+  }
+
+  .pieza__btn {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    padding: 0.55rem;
+    border: var(--line);
+    border-radius: 20px;
+    background: var(--c);
+    box-shadow: 5px 5px 0 var(--ink);
+    cursor: zoom-in;
+    transition: transform 0.4s var(--ease-pop);
+  }
+
+  .pieza__btn img {
+    width: 100%;
+    border-radius: 9px;
+  }
+
+  @media (hover: hover) {
+    .pieza__btn:hover {
+      transform: translateY(-5px) rotate(-1deg);
+    }
+  }
+
+  @media (min-width: 700px) {
+    .rejilla {
+      columns: var(--c3);
+      column-gap: 1.25rem;
+    }
+  }
+
+  @media (min-width: 1000px) {
+    .rejilla {
+      columns: var(--c4);
+    }
+  }
+</style>

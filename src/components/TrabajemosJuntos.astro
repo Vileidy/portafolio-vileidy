@@ -1,0 +1,124 @@
+---
+/** Dos cintas cruzadas con la frase "Trabajemos juntos": llena el espacio entre secciones con algo que dice algo. */
+import Doodle from './Doodle.astro';
+import { hayContacto } from '../data/site';
+
+const base = import.meta.env.BASE_URL;
+const frases = ['Trabajemos juntos', 'Hagamos algo divertido', 'Tu marca con mucho color'];
+const adornos = ['estrella', 'corazon', 'destello', 'flor'] as const;
+
+// Una pista es la misma lista repetida dos veces para que el bucle no se note
+const cintas = [
+  { clase: 'a', color: 'pink', frases: [0, 1, 2] },
+  { clase: 'b', color: 'butter', frases: [1, 2, 0] },
+];
+---
+
+<section class="juntos" aria-labelledby="juntos-titulo">
+  <h2 class="sr-only" id="juntos-titulo">Trabajemos juntos</h2>
+
+  {
+    cintas.map((c) => (
+      <div class={`cinta cinta--${c.clase}`} style={`--c: var(--${c.color})`} aria-hidden="true">
+        <div class="cinta__pista">
+          {[0, 1].map(() => (
+            <ul class="cinta__lista">
+              {[0, 1].flatMap(() => c.frases).map((f, i) => (
+                <li class="cinta__item">
+                  <span>{frases[f]}</span>
+                  <Doodle tipo={adornos[i % adornos.length]} fill="var(--paper)" size="2rem" />
+                </li>
+              ))}
+            </ul>
+          ))}
+        </div>
+      </div>
+    ))
+  }
+
+  {
+    hayContacto && (
+      <a class="btn juntos__cta" href={`${base}#contacto`} style="--c: var(--aqua)">
+        Escríbeme
+      </a>
+    )
+  }
+</section>
+
+<style>
+  .juntos {
+    position: relative;
+    display: grid;
+    padding-block: clamp(1.5rem, 4vw, 3rem);
+    overflow: clip;
+  }
+
+  .cinta {
+    margin-inline: -4%;
+    padding-block: 0.55rem;
+    border-block: var(--line);
+    background: var(--c);
+    overflow: hidden;
+  }
+
+  .cinta--a {
+    transform: rotate(-1.8deg);
+    z-index: 1;
+  }
+
+  .cinta--b {
+    margin-top: -0.4rem;
+    transform: rotate(1.4deg);
+  }
+
+  .cinta__pista {
+    display: flex;
+    width: max-content;
+    animation: cinta-corre 38s linear infinite;
+  }
+
+  .cinta--b .cinta__pista {
+    animation-direction: reverse;
+    animation-duration: 46s;
+  }
+
+  .cinta__lista {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .cinta__item {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3.6rem);
+    letter-spacing: 0.04em;
+    line-height: 1.1;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  @keyframes cinta-corre {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  .juntos__cta {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 3;
+    transform: translate(-50%, -50%) rotate(-3deg);
+    font-size: 1.1rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cinta__pista {
+      animation: none;
+    }
+  }
+</style>

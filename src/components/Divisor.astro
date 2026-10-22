@@ -1,0 +1,14 @@
+---
+/** Franja fina con el patrón "V" de la marca: separa secciones sin dejar un hueco vacío. */
+import patron from '../assets/brand/patron-v.svg';
+---
+
+<div class="divisor" style={`--patron: url(${patron.src})`} aria-hidden="true"></div>
+
+<style>
+  .divisor {
+    height: clamp(2.6rem, 6vw, 4.5rem);
+    border-block: var(--line);
+    background: var(--patron) center 40% / cover no-repeat;
+  }
+</style>

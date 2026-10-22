@@ -1,0 +1,62 @@
+---
+import '@fontsource/anton';
+import '@fontsource/kristi';
+import '@fontsource-variable/fredoka';
+import '../styles/global.css';
+import antonLatin from '@fontsource/anton/files/anton-latin-400-normal.woff2?url';
+import fredokaLatin from '@fontsource-variable/fredoka/files/fredoka-latin-wght-normal.woff2?url';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import Lightbox from '../components/Lightbox.astro';
+import { site } from '../data/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title = site.titulo, description = site.descripcion } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="es" data-motion="off">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#cbb5f0" />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_ES" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary" />
+
+    <link rel="preload" href={antonLatin} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={fredokaLatin} as="font" type="font/woff2" crossorigin />
+
+    <!-- Decide el movimiento antes del primer pintado para que no haya parpadeo -->
+    <script is:inline>
+      document.documentElement.dataset.motion = matchMedia('(prefers-reduced-motion: reduce)').matches ? 'off' : 'on';
+    </script>
+  </head>
+  <body>
+    <Nav />
+    <main id="contenido">
+      <slot />
+    </main>
+    <Footer />
+    <Lightbox />
+
+    <script>
+      import '../scripts/motion';
+      import '../scripts/lightbox';
+    </script>
+  </body>
+</html>

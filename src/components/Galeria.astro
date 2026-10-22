@@ -1,0 +1,239 @@
+---
+import { disciplinas, enGaleria, colorDisciplina, formaCelda, atributosVisor, type Pieza } from '../lib/work';
+
+// Se intercalan las disciplinas para que la vista "Todo" no quede en bloques del mismo tipo
+const colas = disciplinas.map((d) => enGaleria.filter((p) => p.disc === d.id));
+const mezcladas: Pieza[] = [];
+for (let i = 0; mezcladas.length < enGaleria.length; i++) {
+  for (const cola of colas) if (cola[i]) mezcladas.push(cola[i]);
+}
+
+const conteo = Object.fromEntries(disciplinas.map((d, i) => [d.id, colas[i].length]));
+---
+
+<section class="section galeria" id="trabajo" aria-labelledby="trabajo-titulo" data-galeria>
+  <div class="wrap">
+    <header class="section__head">
+      <p class="kicker" style="--c: var(--peach)">Todo el trabajo</p>
+      <h2 class="section__title" id="trabajo-titulo">
+        Una <span class="squiggle" style="--c: var(--pink)">galería</span> para curiosear
+      </h2>
+      <p class="section__lead">
+        Filtra por tipo de pieza y toca cualquiera para verla en grande. Los emails animados se mueven aquí mismo.
+      </p>
+    </header>
+
+    <div class="filtros" role="group" aria-label="Filtrar por disciplina">
+      <button type="button" class="filtro" data-filtro="todo" aria-pressed="true" style="--c: var(--butter)">
+        Todo <sup>{enGaleria.length}</sup>
+      </button>
+      {
+        disciplinas.map((d) => (
+          <button type="button" class="filtro" data-filtro={d.id} aria-pressed="false" style={`--c: var(--${colorDisciplina[d.id]})`}>
+            {d.label} <sup>{conteo[d.id]}</sup>
+          </button>
+        ))
+      }
+    </div>
+
+    <p class="galeria__cuenta" aria-live="polite">
+      Mostrando <b data-galeria-total>{enGaleria.length}</b> piezas
+    </p>
+
+    <ul class="grid">
+      {
+        mezcladas.map((p) => (
+          <li class={`tile tile--${formaCelda(p)}`} data-disc={p.disc} style={`--bg: var(--${colorDisciplina[p.disc]})`}>
+            <button type="button" class="tile__btn" aria-label={`${p.brand}: ${p.title}. Ver en grande`} {...atributosVisor(p, 'galeria')}>
+              <img src={p.src} width={p.w} height={p.h} alt="" loading="lazy" decoding="async" />
+              <span class="tile__etiqueta">
+                <strong>{p.brand}</strong>
+                <span>{p.title}</span>
+              </span>
+              {p.frames > 1 && <span class="tile__anim">animado</span>}
+            </button>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<script>
+  import '../scripts/galeria';
+</script>
+
+<style>
+  .filtros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  .filtro {
+    padding: 0.5rem 1.1rem;
+    border: var(--line);
+    border-radius: 999px;
+    background: var(--paper);
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+      transform 0.3s var(--ease-pop),
+      background-color 0.2s,
+      box-shadow 0.2s;
+  }
+
+  .filtro sup {
+    margin-left: 0.15rem;
+    font-size: 0.7em;
+    opacity: 0.7;
+  }
+
+  @media (hover: hover) {
+    .filtro:hover {
+      background: var(--c);
+      transform: translateY(-2px) rotate(-1.5deg);
+    }
+  }
+
+  .filtro[aria-pressed='true'] {
+    background: var(--c);
+    box-shadow: 3px 3px 0 var(--ink);
+    transform: translate(-1px, -1px);
+  }
+
+  .galeria__cuenta {
+    margin: 1.1rem 0 1.4rem;
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: 11.5rem;
+    grid-auto-flow: dense;
+    gap: 0.75rem;
+  }
+
+  .tile {
+    min-width: 0;
+  }
+
+  .tile[hidden] {
+    display: none;
+  }
+
+  .tile--wide {
+    grid-column: span 2;
+  }
+
+  .tile--tall {
+    grid-row: span 2;
+  }
+
+  .tile__btn {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    padding: 0.65rem;
+    overflow: hidden;
+    border: var(--line);
+    border-radius: 22px;
+    background: var(--bg);
+    cursor: zoom-in;
+    transition:
+      transform 0.4s var(--ease-pop),
+      box-shadow 0.3s var(--ease-out);
+  }
+
+  .tile__btn img {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 9px;
+    box-shadow: 0 5px 16px rgb(35 27 58 / 0.2);
+    transition: transform 0.5s var(--ease-out);
+  }
+
+  .tile__etiqueta {
+    position: absolute;
+    left: 0.5rem;
+    right: 0.5rem;
+    bottom: 0.5rem;
+    display: grid;
+    gap: 0.05rem;
+    padding: 0.4rem 0.7rem;
+    border-radius: 14px;
+    background: var(--ink);
+    color: var(--cream);
+    font-size: 0.78rem;
+    line-height: 1.25;
+    text-align: left;
+    transform: translateY(140%);
+    transition: transform 0.35s var(--ease-out);
+  }
+
+  .tile__etiqueta strong {
+    font-size: 0.85rem;
+  }
+
+  .tile__anim {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    padding: 0.15rem 0.6rem;
+    border: var(--line);
+    border-radius: 999px;
+    background: var(--butter);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .tile__btn:focus-visible .tile__etiqueta {
+    transform: none;
+  }
+
+  /* Sin hover (móvil) la etiqueta queda oculta y se ve en el visor */
+  @media (hover: hover) {
+    .tile__btn:hover {
+      z-index: 2;
+      transform: translateY(-5px) rotate(-1.2deg);
+      box-shadow: 5px 6px 0 var(--ink);
+    }
+
+    .tile__btn:hover .tile__etiqueta {
+      transform: none;
+    }
+
+    .tile__btn:hover img {
+      transform: scale(1.03);
+    }
+  }
+
+  @media (min-width: 640px) {
+    .grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-auto-rows: 12.5rem;
+      gap: 1rem;
+    }
+  }
+
+  @media (min-width: 1000px) {
+    .grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-auto-rows: 14rem;
+    }
+  }
+
+  @media (min-width: 1240px) {
+    .grid {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+  }
+</style>

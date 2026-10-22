@@ -1,0 +1,204 @@
+---
+import Doodle from './Doodle.astro';
+import retrato from '../assets/brand/retrato.webp';
+import { site } from '../data/site';
+import { disciplinas, piezas } from '../lib/work';
+import { proyectos } from '../data/proyectos';
+
+const cifras = [
+  { n: piezas.length, texto: 'piezas diseñadas', color: 'aqua' },
+  { n: disciplinas.length, texto: 'disciplinas', color: 'pink' },
+  { n: proyectos.length, texto: 'casos de estudio', color: 'butter' },
+];
+---
+
+<section class="section sobre" id="sobre-mi" aria-labelledby="sobre-titulo">
+  <div class="wrap sobre__grid">
+    <div class="sobre__foto reveal" style="--rot: -2deg">
+      <div class="sobre__marco">
+        <img src={retrato.src} width={retrato.width} height={retrato.height} alt="" loading="lazy" decoding="async" />
+      </div>
+      <span class="sobre__doodle sobre__doodle--a"><Doodle tipo="estrella" fill="var(--butter)" size="3.6rem" /></span>
+      <span class="sobre__doodle sobre__doodle--b"><Doodle tipo="destello" fill="var(--aqua)" size="2.8rem" /></span>
+    </div>
+
+    <div class="sobre__texto">
+      <p class="kicker" style="--c: var(--mint)">Sobre mí</p>
+      <h2 class="section__title" id="sobre-titulo">
+        Hola, soy <span class="sobre__script">{site.nombre.split(' ')[0]}</span>
+      </h2>
+
+      <div class="sobre__bio reveal">
+        {site.bio.map((p) => <p>{p}</p>)}
+      </div>
+
+      <ul class="sobre__rasgos reveal" aria-label="Lo que me caracteriza">
+        {
+          site.rasgos.map((r, i) => (
+            <li class="chip" style={`--c: var(--${['aqua', 'pink', 'butter'][i % 3]})`}>
+              {r}
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="sobre__bloque reveal">
+        <h3>Programas</h3>
+        <ul class="sobre__rasgos">
+          {
+            site.herramientas.map((h, i) => (
+              <li class="chip" style={`--c: var(--${['lav', 'peach', 'mint', 'sky'][i % 4]})`}>
+                {h}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <ul class="cifras">
+        {
+          cifras.map((c) => (
+            <li class="cifra reveal" style={`--c: var(--${c.color})`}>
+              <span class="cifra__n" data-cuenta={c.n}>
+                {c.n}
+              </span>
+              <span class="cifra__t">{c.texto}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .sobre__grid {
+    display: grid;
+    gap: clamp(2.5rem, 6vw, 5rem);
+    align-items: center;
+  }
+
+  .sobre__foto {
+    position: relative;
+    width: min(100%, 25rem);
+    justify-self: center;
+  }
+
+  .sobre__marco {
+    aspect-ratio: 1;
+    overflow: hidden;
+    isolation: isolate;
+    border: var(--line);
+    border-radius: 58% 42% 52% 48% / 46% 54% 46% 54%;
+    background: linear-gradient(155deg, var(--pink), var(--peach) 70%);
+    box-shadow: 8px 8px 0 var(--ink);
+  }
+
+  .sobre__marco img {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+    object-position: center 8%;
+    mix-blend-mode: multiply;
+  }
+
+  .sobre__doodle {
+    position: absolute;
+    animation: sobre-bal 5s ease-in-out infinite alternate;
+  }
+
+  .sobre__doodle--a {
+    top: -1rem;
+    right: 0.5rem;
+  }
+
+  .sobre__doodle--b {
+    bottom: 1rem;
+    left: -1rem;
+    animation-delay: -2s;
+  }
+
+  @keyframes sobre-bal {
+    from {
+      transform: rotate(-10deg) translateY(0);
+    }
+    to {
+      transform: rotate(10deg) translateY(-8px);
+    }
+  }
+
+  .sobre__texto {
+    display: grid;
+    gap: 1.4rem;
+    justify-items: start;
+  }
+
+  .sobre__script {
+    font-family: var(--font-script);
+    font-size: 1.25em;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--lav-deep);
+  }
+
+  .sobre__bio {
+    display: grid;
+    gap: 1rem;
+    max-width: 36rem;
+    font-size: clamp(1.05rem, 1.7vw, 1.25rem);
+  }
+
+  .sobre__rasgos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .sobre__bloque {
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .sobre__bloque h3 {
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+  }
+
+  .cifras {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    margin-top: 0.6rem;
+  }
+
+  .cifra {
+    display: grid;
+    min-width: 8.5rem;
+    padding: 0.8rem 1.2rem;
+    border: var(--line);
+    border-radius: 20px;
+    background: var(--c);
+    box-shadow: 4px 4px 0 var(--ink);
+  }
+
+  .cifra__n {
+    font-family: var(--font-display);
+    font-size: 2.6rem;
+    line-height: 1;
+  }
+
+  .cifra__t {
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  @media (min-width: 900px) {
+    .sobre__grid {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    }
+  }
+</style>

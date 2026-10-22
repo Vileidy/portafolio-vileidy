@@ -1,0 +1,89 @@
+---
+import Doodle from './Doodle.astro';
+import { site } from '../data/site';
+import { marcasUnicas } from '../lib/work';
+
+// Cada marca de la lista debe existir de verdad en el catálogo
+const sinPieza = site.marcas.filter((m) => !marcasUnicas.has(m));
+if (sinPieza.length) throw new Error(`Marcas sin piezas en el catálogo: ${sinPieza.join(', ')}`);
+
+const colores = ['aqua', 'pink', 'butter', 'lav', 'mint', 'peach', 'sky'];
+const adornos = ['estrella', 'destello', 'corazon', 'flor'] as const;
+---
+
+<section class="marquee" aria-label="Marcas con las que he trabajado">
+  <div class="marquee__pista">
+    {
+      [0, 1].map((copia) => (
+        <ul class="marquee__lista" aria-hidden={copia === 1 ? 'true' : undefined}>
+          {site.marcas.map((marca, i) => (
+            <li class="marquee__item" style={`--c: var(--${colores[i % colores.length]})`}>
+              <span class="marquee__marca">{marca}</span>
+              <Doodle tipo={adornos[i % adornos.length]} fill={`var(--${colores[(i + 3) % colores.length]})`} size="1.6rem" />
+            </li>
+          ))}
+        </ul>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .marquee {
+    overflow: hidden;
+    padding-block: 1.1rem;
+    border-bottom: var(--line);
+    background: var(--cream);
+  }
+
+  .marquee__pista {
+    display: flex;
+    width: max-content;
+    animation: corre 46s linear infinite;
+  }
+
+  .marquee:hover .marquee__pista {
+    animation-play-state: paused;
+  }
+
+  .marquee__lista {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding-right: 1rem;
+  }
+
+  .marquee__item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .marquee__marca {
+    padding: 0.35rem 1.2rem 0.3rem;
+    border: var(--line);
+    border-radius: 999px;
+    background: var(--c);
+    font-family: var(--font-display);
+    font-size: clamp(1.3rem, 2.4vw, 1.9rem);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  @keyframes corre {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .marquee {
+      overflow-x: auto;
+    }
+
+    .marquee__pista {
+      animation: none;
+    }
+  }
+</style>
