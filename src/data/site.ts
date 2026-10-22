@@ -15,8 +15,9 @@ export const site = {
   ],
   rasgos: ['Estratégica', 'Orientada a resultados', 'Atención al detalle'],
 
-  // Programas que figuran en los pies de las láminas originales.
-  herramientas: ['Adobe XD', 'Illustrator', 'Photoshop'],
+  // Programas con los que trabaja. Adobe XD, Illustrator y Photoshop figuran en los pies de las
+  // láminas originales; Figma lo añadió Vileidy.
+  herramientas: ['Adobe XD', 'Illustrator', 'Photoshop', 'Figma'],
 
   // Marcas con las que se ha trabajado (todas aparecen en las piezas del catálogo).
   marcas: [
